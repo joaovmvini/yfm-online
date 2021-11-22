@@ -53,6 +53,7 @@
 
    color: white;
    margin: 5px;
+   position: relative;
 }
 
 .deck-setter-card-item .card-details {
@@ -77,6 +78,15 @@
 
     position: absolute;
     border: 2px dashed #fff;
+}
+
+
+.deck-setter-card-counter {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 10px;
+    top: 1px;
 }
 
 ::-webkit-scrollbar {

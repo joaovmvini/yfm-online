@@ -28,10 +28,15 @@ const cardView = (function() {
 
             for (let i = 0; i < cards.length; i ++) {
                 var item = Utils.createAndInsert('div', 'deck-setter-card-item', element);
+                item.card = cards[i];
+                
                 var imageElement = Utils.createAndInsert('img', 'card-item-img', item);
                 var cardName = Utils.createAndInsert('span', 'card-details', item);
                 var cardAtkDef = Utils.createAndInsert('span', 'card-details', item);
 
+                var selectionCounter = Utils.createAndInsert('div', 'deck-setter-card-counter', item);
+
+                Utils.insertText(selectionCounter, '0/3');
                 Utils.insertText(cardAtkDef, cards[i].atk + '/' + cards[i].def + ' (atk/def)');
                 Utils.insertText(cardName, cards[i].name);
 
