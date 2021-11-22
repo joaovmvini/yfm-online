@@ -38,8 +38,48 @@
 .deck-setter-card-view {
     width: 100%;
     height: calc(100% - 80px);
+
+    overflow-y: scroll;
+    position: relative;
 }
 
 .deck-setter-card-item {
-   
+   width: 100%;
+   height: 70px;
+
+   display: flex;
+   justify-content: flex-start;
+   align-items: center;
+
+   color: white;
+   margin: 5px;
+}
+
+.deck-setter-card-item .card-details {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.deck-setter-card-item .card-details:nth-child(3) {
+    margin-right: 20px;
+    margin-left: auto;
+}
+
+.deck-setter-card-item .card-item-img {
+    background-size: 100% 100%;
+    width: 60px;
+    height: 100%;
+}
+
+.deck-setter-selected {
+    width: 100%;
+    height: 75px;
+
+    position: absolute;
+    border: 2px dashed #fff;
+}
+
+::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
 }

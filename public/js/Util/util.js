@@ -11,6 +11,15 @@ const Utils = {
         }
         
         return el;
+    },
+    insertText(el, text) {
+        el.textContent = text;
+    },
+    changeY(el, speed) {
+        el.style.top = (el.offsetTop + speed) + 'px';
+    },
+    changeX(el, speed) {
+        el.style.left = (el.offsetLeft + speed) + 'px';
     }
 }
 

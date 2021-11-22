@@ -7,6 +7,8 @@ const Fs = require('fs');
 const http = require('http');
 const { Server } = require('socket.io');
 
+const getCollection = require('../database/getCollection');
+
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -17,10 +19,10 @@ app.use(express.json());
 
 // Routes
 
-app.get('/getAllCards', (req, res) => {
-    const cardList = Fs.readdirSync(path.resolve(publicDir, 'cards'));
-    const paths = cardList.map(cardName => '/cards/' + cardName);
-    return res.json({ cards: paths });
+app.get('/getAllCards', async (req, res) => {
+    const cardList = await getCollection();
+
+    return res.json({ cards: cardList });
 });
 
 
