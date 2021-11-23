@@ -6,8 +6,7 @@ const DeckSetter = function(element) {
     const main_view = Utils.createAndInsert('div', 'deck-setter-main', element);
 
     const insertComponents = function() {
-        main_view.appendChild(nav);
-        main_view.appendChild(cardView);
+        Utils.append(main_view, nav(cardView), cardView);
     };
 
 

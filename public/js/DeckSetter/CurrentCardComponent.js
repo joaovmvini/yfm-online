@@ -2,7 +2,7 @@ import Utils from "../Util/util.js";
 
 const CurrentCardComponent = (function(cards, parentComponent) {
     const component = Utils.createAndInsert('div', 'deck-setter-selected', null);
-
+  
     component.sendCommand = function(keyCode) {
         switch (keyCode) {
             case 38:
@@ -33,8 +33,6 @@ const CurrentCardComponent = (function(cards, parentComponent) {
             let yVariation = 75 * direction;
             Utils.changeY(component, yVariation);
             state.currentIndex += direction;
-    
-            updateCurrentCard();
             updateScrollBar(yVariation);
         }
     };

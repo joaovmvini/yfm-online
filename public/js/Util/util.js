@@ -20,6 +20,20 @@ const Utils = {
     },
     changeX(el, speed) {
         el.style.left = (el.offsetLeft + speed) + 'px';
+    },
+    append(parent, ...childrens) {
+        for (let i = 0; i < childrens.length; i ++) {
+            parent.appendChild(childrens[i]);
+        }
+    },
+    ocult(element) {
+        element.style.display = 'none';
+    },
+    show(element) {
+        element.style.display = '';
+    },
+    isOcult(element) {
+        return element.style.display == 'none';
     }
 }
 
