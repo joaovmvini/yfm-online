@@ -1,9 +1,11 @@
 import Utils from "../Util/util.js";
 import CurrentCardComponent from "./CurrentCardComponent.js";
 
-const cardView = (function() {
-    const element = Utils.createAndInsert('div', 'deck-setter-card-view', null);
-    element.tabIndex = '0';
+const cardView = (function(navObject) {
+    const object = {};
+
+    object.component = Utils.createAndInsert('div', 'deck-setter-card-view', null);
+    object.component.tabIndex = '0';
 
     const loadCards = async function() {
         const res = await fetch('/getAllCards')
@@ -16,10 +18,10 @@ const cardView = (function() {
         }
     }
 
-    const setEvents = function(currentCard) {
-        element.addEventListener('keydown', (event) => {
+    const setEvents = function(currentCardObject) {
+        object.component.addEventListener('keydown', (event) => {
             event.preventDefault();
-            currentCard.sendCommand(event.keyCode);
+            currentCardObject.sendCommand(event.keyCode);
         });
     };
 
@@ -27,7 +29,7 @@ const cardView = (function() {
         if (cards) {
 
             for (let i = 0; i < cards.length; i ++) {
-                var item = Utils.createAndInsert('div', 'deck-setter-card-item', element);
+                var item = Utils.createAndInsert('div', 'deck-setter-card-item', object.component);
                 item.card = cards[i];
                 
                 var imageElement = Utils.createAndInsert('img', 'card-item-img', item);
@@ -44,14 +46,16 @@ const cardView = (function() {
             }
 
             // Set selected card component
-            const currentCard = CurrentCardComponent(cards, element);
-            element.insertBefore(currentCard, element.children[0]);
+            const currentCardObject = CurrentCardComponent(object.component);
 
-            setEvents(currentCard);
+            Utils.append(object.component.children[0], currentCardObject.component);
+
+            navObject.setEvents(currentCardObject);
+            setEvents(currentCardObject);
         }
     });
 
-    return element;
-})();
+    return object;
+});
 
 export default cardView;

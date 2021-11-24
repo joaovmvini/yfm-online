@@ -1,9 +1,12 @@
 import Utils from "../Util/util.js";
 
-const CurrentCardComponent = (function(cards, parentComponent) {
-    const component = Utils.createAndInsert('div', 'deck-setter-selected', null);
-  
-    component.sendCommand = function(keyCode) {
+const CurrentCardComponent = (function(parentComponent) {
+    const object = {};
+
+    object.component = Utils.createAndInsert('div', 'deck-setter-selected', null);
+    object.component.item = parentComponent.children[0];
+
+    object.sendCommand = function(keyCode) {
         switch (keyCode) {
             case 38:
                 move(-1);
@@ -22,92 +25,85 @@ const CurrentCardComponent = (function(cards, parentComponent) {
         }
     };
    
+    const allItems = Array.from(parentComponent.children);
+
     const state = {
-        currentIndex: 0,
-        currentCard: cards[0],
-        counter: []
+        deckStorage: [],
+        currentIndex: 0
+    };
+
+    const getIndexByItem = function(item) {
+        return allItems.indexOf(item);
     };
 
     const move = function(direction) {
-        if (cards[state.currentIndex + direction]) {
-            let yVariation = 75 * direction;
-            Utils.changeY(component, yVariation);
-            state.currentIndex += direction;
-            updateScrollBar(yVariation);
-        }
+       var reference = null;
+       let component = object.component;
+
+       if (direction > 0) {
+           reference = component.item.nextElementSibling;
+       } else {
+           reference = component.item.previousElementSibling;
+       }
+
+       if (reference && ! Utils.isOcult(reference)) {
+           component.item = reference;
+           state.currentIndex = getIndexByItem(reference);
+           Utils.append(reference, component);
+       }
     };
 
-    const updateCurrentCard = function() {
-        state.currentCard = cards[state.currentIndex];
+    const getCard = function() {
+        return allItems[state.currentIndex].card;
     };
 
-    const updateScrollBar = function(v) {
-        parentComponent.scrollTop += v;
+    const saveDeck = function() {
+        localStorage.deck = JSON.stringify(state.deckStorage);
     };
 
-    const updateAllCards = function(isStoredDeck = false) {
-        if (state.counter.length) {
-            state.counter.forEach(function (counterObject) {
-                const counterElement = parentComponent.children[counterObject.index - Number(isStoredDeck)].lastElementChild;
-                Utils.insertText(counterElement, counterObject.counter + '/3');
-
-                if (! counterObject.counter) {
-                    state.counter.splice(state.counter.indexOf(counterObject), 1);
-                }
-            });
-        }
-    }
+    const updateItemNumeration = function(item, num) {
+        Utils.insertText(item.children[3], num + '/3');
+    };
 
     const insertOrRemoveCard = function(inc) {
-        updateCardCounterState(inc);
-        updateAllCards();
-        storeCurrentDeck();
-    };
+        
+        const cardObject = state.deckStorage.find(o => o && o.index == state.currentIndex);
 
-    const storeCurrentDeck = function() {
-        localStorage.deck = JSON.stringify(state.counter);
-    };
-
-    const updateCardCounterState = function(inc) {
-        const currentIndex = state.currentIndex + 1;
-        const counterObject = state.counter.find(o => o && o.index == currentIndex);
-        const cardItem = parentComponent.children[currentIndex].card;
-        const increase = inc > 0;
-
-        if (! counterObject && ! increase) {
-            return ;
+        if (! cardObject && inc > 0) {
+            let cardObj = { index: state.currentIndex, card: getCard(), counter: 1 };
+            state.deckStorage.push(cardObj);
+            updateItemNumeration(object.component.item, cardObj.counter);
         }
 
-        if (counterObject && counterObject.counter < 1 && ! increase) {
-            return ;
-        }
+        if ((cardObject && cardObject.counter < 3 && inc > 0) || (cardObject && cardObject.counter > 0 && inc < 0)) {
+            cardObject.counter += inc;
 
-        if (! counterObject && increase) {
-            state.counter.push({ index: currentIndex, counter: 1, card:  cardItem });
-        } else if (counterObject.counter < 3 || ! increase) {
-            counterObject.counter += inc;
-        }
+            if (! cardObject.counter) {
+                state.deckStorage.splice(state.deckStorage.indexOf(cardObject), 1);
+            }
+            updateItemNumeration(object.component.item, cardObject.counter);
+        } 
+
+        saveDeck();
     };
 
-    
-    const hasStoredDeck = function() {
+    const loadInitialState = function() {
         if (localStorage.deck) {
-            state.counter = JSON.parse(localStorage.deck);
-            return true;
+            const storedDeck = JSON.parse(localStorage.deck);
+
+            if (storedDeck.length) {
+                state.deckStorage = storedDeck;
+
+                storedDeck.forEach(cardObj => {
+                    updateItemNumeration(allItems[cardObj.index], cardObj.counter);
+                });
+            }
         }
-        return false;
     };
-
-    const startEvents = function() {
-        const isStoredDeck = hasStoredDeck();
-        if (isStoredDeck) {
-            updateAllCards(isStoredDeck);
-        }
-    };
-
-    startEvents();
-
-    return component;
+    
+    loadInitialState();
+    
+    return object;
 });
 
 
