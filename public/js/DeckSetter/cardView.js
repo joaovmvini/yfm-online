@@ -1,5 +1,6 @@
+import startingGameButton from "../GameStart/startingGameButton.js";
 import Utils from "../Util/util.js";
-import CurrentCardComponent from "./CurrentCardComponent.js";
+import CurrentCardComponent from "./cardSelecting.js";
 
 const cardView = (function(navObject) {
     const object = {};
@@ -46,7 +47,8 @@ const cardView = (function(navObject) {
             }
 
             // Set selected card component
-            const currentCardObject = CurrentCardComponent(object.component);
+            const startingGameObject = startingGameButton(navObject.component);
+            const currentCardObject = CurrentCardComponent(object.component, startingGameObject);
 
             Utils.append(object.component.children[0], currentCardObject.component);
 

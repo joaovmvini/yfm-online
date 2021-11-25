@@ -1,6 +1,6 @@
 import Utils from "../Util/util.js";
 
-const CurrentCardComponent = (function(parentComponent) {
+const CurrentCardComponent = (function(parentComponent, startingGameObject) {
     const object = {};
 
     object.component = Utils.createAndInsert('div', 'deck-setter-selected', null);
@@ -29,11 +29,26 @@ const CurrentCardComponent = (function(parentComponent) {
 
     const state = {
         deckStorage: [],
-        currentIndex: 0
+        currentIndex: 0,
+        showStartingGame: false,
+        yVariation: 75
     };
 
     const getIndexByItem = function(item) {
         return allItems.indexOf(item);
+    };
+
+    const updateScrolling = function() {
+        const yc = state.currentIndex * state.yVariation;
+        const yp = parentComponent.clientHeight + parentComponent.scrollTop;
+        
+        if (yc > yp) {
+            parentComponent.scrollTop += state.yVariation;
+        }
+
+        if (yc < yp - parentComponent.clientHeight) {
+            parentComponent.scrollTop -= state.yVariation;
+        }
     };
 
     const move = function(direction) {
@@ -50,6 +65,8 @@ const CurrentCardComponent = (function(parentComponent) {
            component.item = reference;
            state.currentIndex = getIndexByItem(reference);
            Utils.append(reference, component);
+
+           updateScrolling();
        }
     };
 
@@ -59,6 +76,8 @@ const CurrentCardComponent = (function(parentComponent) {
 
     const saveDeck = function() {
         localStorage.deck = JSON.stringify(state.deckStorage);
+
+        checkForStartingGame();
     };
 
     const updateItemNumeration = function(item, num) {
@@ -97,9 +116,31 @@ const CurrentCardComponent = (function(parentComponent) {
                 storedDeck.forEach(cardObj => {
                     updateItemNumeration(allItems[cardObj.index], cardObj.counter);
                 });
+
+                checkForStartingGame();
             }
         }
     };
+
+    const showStartinGame = function() {
+        if (state.showStartingGame) {
+            startingGameObject.show();
+        } else {
+            startingGameObject.hide();
+        }
+    };
+
+    const checkForStartingGame = function() {
+        const cardLength = state.deckStorage.map((o) => o.counter).reduce((prev, curr) => prev + curr);
+
+        if (cardLength === 40) {
+            state.showStartingGame = true;
+        } else {
+            state.showStartingGame = false;
+        }
+
+        showStartinGame();
+    }
     
     loadInitialState();
     
