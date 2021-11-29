@@ -1,4 +1,6 @@
 import DeckSetter from "./DeckSetter/DeckSetter.js";
+import GameStart from "./GameStart/GameStart.js";
+import StartSocketCommunication from "./socket.io/main.js";
 
 (function main() {
 
@@ -6,7 +8,7 @@ import DeckSetter from "./DeckSetter/DeckSetter.js";
 
     const states = {
         1: DeckSetter, 
-        2: 'Game'
+        2: GameStart
     };
 
     const getOrSetState = function() {
@@ -19,8 +21,10 @@ import DeckSetter from "./DeckSetter/DeckSetter.js";
     const state = getOrSetState();
 
     const start = (function () {
+        const socketHandler = StartSocketCommunication();
+        
         if (states[state]) {
-            states[state](main_view);
+            states[state](main_view, socketHandler);
         }
     });
 

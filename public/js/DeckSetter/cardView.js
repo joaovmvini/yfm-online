@@ -2,7 +2,7 @@ import startingGameButton from "../GameStart/startingGameButton.js";
 import Utils from "../Util/util.js";
 import CurrentCardComponent from "./cardSelecting.js";
 
-const cardView = (function(navObject) {
+const cardView = (function(navObject, socketHandler) {
     const object = {};
 
     object.component = Utils.createAndInsert('div', 'deck-setter-card-view', null);
@@ -47,7 +47,7 @@ const cardView = (function(navObject) {
             }
 
             // Set selected card component
-            const startingGameObject = startingGameButton(navObject.component);
+            const startingGameObject = startingGameButton(navObject.component, socketHandler);
             const currentCardObject = CurrentCardComponent(object.component, startingGameObject);
 
             Utils.append(object.component.children[0], currentCardObject.component);
